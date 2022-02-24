@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Campground = require('../models/campground');
 const cities = require('./cities');
 const {places, descriptors } = require('./seedHelpers');
-const axios = require('axios');
+
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp'
 )
@@ -13,41 +13,41 @@ db.once("open", ()=>{
     console.log('Database connected');
 });
 
-async function seedImg() {
-    try {
-      const resp = await axios.get('https://api.unsplash.com/photos/random', {
-        params: {
-          client_id: 'yeN66e3AVJb7Mh-u5bQX1nfYo8lhM3p0ldA_Lu7L6Uo',
-          collections: 1114848,
-        },
-      })
-      return resp.data.urls.small
-    } catch (err) {
-      console.error(err)
-    }
-  }
+
 const sample = array => array[Math.floor(Math.random() * array.length)];
 const seedDB = async()=>{
     await Campground.deleteMany({});
       // call unsplash and return small image
-
    for(let i = 0; i<20;i++){
        const random1000 = Math.floor(Math.random()*1000);
        const price = Math.floor(Math.random()*1000);
        
-
        const camp = new Campground({
+           author:'620bc01084d7d4d816165565',
+           location: `${cities[random1000].city}, ${cities[random1000].state}`,
            title: `${sample(descriptors)} ${sample(places)}`,
-           image: await seedImg(),
-           price,
            description: "Beautiful place and good campground. Good views and quite.",
-           location: `${cities[random1000].city}, ${cities[random1000].state}`
-       })
-    
-       await camp.save();
-      
-   }
+           price,
+           geometry: {
+                type: "Point",
+                coordinates: [
+            cities[random1000].longitude,
+            cities[random1000].latitude,
+               ]
+            },
 
+           images: [
+             {
+               url:'https://res.cloudinary.com/dixvdffo4/image/upload/v1645123434/YelpCamp/xigu5c3nzqpclwfmonh0.jpg',
+               filename: 'YelpCamp/xigu5c3nzqpclwfmonh0'
+             },
+            { url: 'https://res.cloudinary.com/dixvdffo4/image/upload/v1645115563/YelpCamp/ps1a2muzjybmsmgmludo.jpg',
+             filename: 'YelpCamp/ps1a2muzjybmsmgmludo'
+            }
+           ]
+        })
+       await camp.save();
+   }
 }
 
 seedDB().then(()=>{
