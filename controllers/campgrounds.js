@@ -6,8 +6,8 @@ const {cloudinary} = require("../cloudinary");
 
 
 module.exports.index = async(req, res) => {
-    const campgrounds = await Campground.find({});
-
+    //const campgrounds = await Campground.find({}).populate('popupText');
+const campgrounds = await Campground.find({});
     res.render('campgrounds/index',{campgrounds})
 }
 
@@ -26,7 +26,7 @@ module.exports.createCampground = async(req, res, next)=>{
     campground.images = req.files.map(f => ({url:f.path,filename:f.filename}));
         campground.author = req.user._id;
         await campground.save();
-        console.log(campground)
+       
         req.flash('success','Successfully made a new campground!');
         res.redirect(`/campgrounds/${campground._id}`)
 }
