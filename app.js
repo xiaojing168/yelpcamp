@@ -12,6 +12,7 @@ const flash = require('connect-flash');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
+const mongoSanitize = require('express-mongo-sanitize');
 
 const userRoutes = require('./routes/users')
  const campgroundsRoutes = require('./routes/campgrounds')
@@ -33,9 +34,11 @@ const app = express();
 app.engine('ejs',ejsMate);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views')) //for route
+
 app.use(express.urlencoded({extended:true})) //for parser body
 app.use(methodOverride('_method'));//for put, delete
 app.use(express.static(path.join(__dirname,'public')))
+app.use(mongoSanitize());//stay same page if wrong url
 
 const secret = process.env.Secret || 'thisshouldbeabettersecret!';
 
